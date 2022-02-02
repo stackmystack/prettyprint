@@ -261,13 +261,10 @@ class PrettyPrint
     group = Group.new(@group_stack.last.depth + 1)
     @group_stack.push group
     @group_queue.enq group
-    begin
-      yield
-    ensure
-      @group_stack.pop
-      if group.breakables.empty?
-        @group_queue.delete group
-      end
+    yield
+    @group_stack.pop
+    if group.breakables.empty?
+      @group_queue.delete group
     end
   end
 
@@ -276,11 +273,8 @@ class PrettyPrint
   #
   def nest(indent)
     @indent += indent
-    begin
-      yield
-    ensure
-      @indent -= indent
-    end
+    yield
+    @indent -= indent
   end
 
   # outputs buffered data.
